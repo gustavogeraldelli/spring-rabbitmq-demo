@@ -1,0 +1,10 @@
+services:
+  bd:
+    image: postgres
+    container_name: bdrabbitspring
+    environment:
+      POSTGRES_DB: rabbitspring
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
