@@ -9,7 +9,7 @@ public record PropostaResponseDTO(
         Double renda,
         Double valorSolicitado,
         int prazo,
-        Boolean aprovado,
+        Boolean aprovada,
         String observacao
 ) {
 }
