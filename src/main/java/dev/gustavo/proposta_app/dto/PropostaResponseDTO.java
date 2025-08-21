@@ -7,7 +7,7 @@ public record PropostaResponseDTO(
         String telefone,
         String cpf,
         Double renda,
-        Double valorSolicitado,
+        String valorSolicitadoFmt,
         int prazo,
         Boolean aprovada,
         String observacao
