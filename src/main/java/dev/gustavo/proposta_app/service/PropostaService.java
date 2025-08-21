@@ -2,6 +2,7 @@ package dev.gustavo.proposta_app.service;
 
 import dev.gustavo.proposta_app.dto.PropostaRequestDTO;
 import dev.gustavo.proposta_app.dto.PropostaResponseDTO;
+import dev.gustavo.proposta_app.entity.Proposta;
 import dev.gustavo.proposta_app.mapper.PropostaMapper;
 import dev.gustavo.proposta_app.repository.PropostaRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +20,13 @@ public class PropostaService {
     public PropostaResponseDTO criar(PropostaRequestDTO propostaRequestDTO) {
         var p = propostaRepository.save(PropostaMapper.INSTANCE.toProposta(propostaRequestDTO));
 
-        var response = PropostaMapper.INSTANCE.toPropostaResponseDTO(p);
+        notificarRabbitMQ(p);
 
-        notificationService.notificar(response, "proposta-pendente.ex");
+        return PropostaMapper.INSTANCE.toPropostaResponseDTO(p);
+    }
 
-        return response;
+    private void notificarRabbitMQ(Proposta proposta) {
+        notificationService.notificar(proposta, "proposta-pendente.ex");
     }
 
 //    public PropostaResponseDTO buscarProposta(Long id) {
