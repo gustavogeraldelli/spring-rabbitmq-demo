@@ -14,10 +14,16 @@ import java.util.List;
 public class PropostaService {
 
     private final PropostaRepository propostaRepository;
+    private final NotificationService notificationService;
 
     public PropostaResponseDTO criar(PropostaRequestDTO propostaRequestDTO) {
         var p = propostaRepository.save(PropostaMapper.INSTANCE.toProposta(propostaRequestDTO));
-        return PropostaMapper.INSTANCE.toPropostaResponseDTO(p);
+
+        var response = PropostaMapper.INSTANCE.toPropostaResponseDTO(p);
+
+        notificationService.notificar(response, "proposta-pendente.ex");
+
+        return response;
     }
 
 //    public PropostaResponseDTO buscarProposta(Long id) {
