@@ -26,7 +26,17 @@ public class PropostaService {
     }
 
     private void notificarRabbitMQ(Proposta proposta) {
-        notificationService.notificar(proposta, "proposta-pendente.ex");
+        try {
+            notificationService.notificar(proposta, "proposta-pendente.ex");
+        }
+        catch (RuntimeException e) {
+            // flag para indicar se foi enviado ao rabbitmq ou nao
+            // pode ser feito depois um procedimento de tempos em tempos
+            // para recuperar os registros que nao foram enviados
+            // para que sejam enviados para o processamento
+            proposta.setIntegrada(false);
+            propostaRepository.save(proposta);
+        }
     }
 
 //    public PropostaResponseDTO buscarProposta(Long id) {
