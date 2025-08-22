@@ -13,7 +13,7 @@ public class PropostaConcluidaListener {
 
     private final SNSService snsService;
 
-    @RabbitListener(queues = "${rabbitmq.queue.proposta.pendente}")
+    @RabbitListener(queues = "${rabbitmq.queue.proposta.concluida}")
     public void propostaPendente(Proposta proposta) {
         String msg = "";
         if (proposta.getAprovada()) msg = Mensagens.PROPOSTA_APROVADA;
