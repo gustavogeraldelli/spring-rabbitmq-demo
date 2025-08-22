@@ -7,5 +7,5 @@ spring.rabbitmq.password=guest
 
 rabbitmq.queue.proposta.pendente=proposta-pendente.ms-notificacao
 
-aws.accessKey=AKIAXYKJUJSOYSULHSUR
-aws.secretKey=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
+aws.accessKey=${AWS_ACCESSKEY}
+aws.secretKey=${AWS_SECRETKEY}
