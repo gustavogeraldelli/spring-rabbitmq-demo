@@ -16,8 +16,8 @@ echo "Iniciando microsserviços..."
 
 SERVICES=(
     "ms-proposta"
-    "analise-credito"
-    "notificacao-ms"
+    "ms-analise-credito"
+    "ms-notificacao"
 )
 
 for SVC in "${SERVICES[@]}"
