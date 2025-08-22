@@ -32,11 +32,13 @@ public class RabbitMQConfig {
     }
 
     /**
-     * Essas filas vão receber payload desse microsserviço
-     * quando uma proposta for realizada.
-     * As duas filas vão receber a mesma mensagem,
-     * por isso o FanoutExchange.
-     * cada uma das filas está bindada com a mesma exchange
+     * Esse serviço (proposta-ms)
+     * vai publicar mensagens na (fanout) Exchange 'proposta-pendente.ex'
+     *
+     * que vai encaminhar para as filas 'proposta-pendente.ms-analisar-credito' e
+     *                                      'proposta-pendente.ms-notificacao'
+     *
+     * que serão consumidas/ouvidas pelos microserviços 'ms-analisar-credito' e 'ms-notificacao', respectivamente
      */
 
     @Bean
@@ -54,19 +56,30 @@ public class RabbitMQConfig {
         return ExchangeBuilder.fanoutExchange("proposta-pendente.ex").build();
     }
 
+    // bind proposta-pendente.ex com proposta-pendente.ms-analisar-credito
     @Bean
     public Binding createBindingPropostaPendenteMsAnaliseCredito() {
         return BindingBuilder.bind(createQueuePropostaPendenteMsAnaliseCredito())
                 .to(createFanoutExchangePropostaPendente());
     }
 
+    // bind proposta-pendente.ex com proposta-pendente.ms-notificacao
     @Bean
     public Binding createBindingPropostaPendenteMsNotificacao() {
         return BindingBuilder.bind(createQueuePropostaPendenteMsNotificacao())
                 .to(createFanoutExchangePropostaPendente());
     }
 
-    // ***************************************************************************************
+    /**
+     * [] A lógia de criação caberia estar no serviço responsável por enviar as mensagens
+     * O serviço 'ms-analisar-credito'
+     * vai publicar mensagens na (fanout) Exchange 'proposta-concluida.ex'
+     *
+     * que vai encaminhar para as filas 'proposta-concluida.ms-proposta' (esse serviço) e
+     *                                      'proposta-concluida.ms-notificacao'
+     *
+     * que serão consumidas/ouvidas pelos microserviços 'ms-proposta' (esse serviço) e 'ms-notificacao', respectivamente
+     */
 
     @Bean
     public Queue createQueuePropostaConcluidaMsProposta() {
@@ -76,6 +89,25 @@ public class RabbitMQConfig {
     @Bean
     public Queue createQueuePropostaConcluidaMsNotificacao() {
         return QueueBuilder.durable("proposta-concluida.ms-notificacao").build();
+    }
+
+    @Bean
+    public FanoutExchange createFanoutExchangePropostaConcluida() {
+        return ExchangeBuilder.fanoutExchange("proposta-concluida.ex").build();
+    }
+
+    // bind proposta-concluida.ex com proposta-concluida.ms-proposta (esse)
+    @Bean
+    public Binding createBindingPropostaConcluidaMsProposta() {
+        return BindingBuilder.bind(createQueuePropostaConcluidaMsProposta())
+                .to(createFanoutExchangePropostaConcluida());
+    }
+
+    // bind proposta-concluida.ex com proposta-concluida.ms-notificacao
+    @Bean
+    public Binding createBindingPropostaConcluidaMsNotificacao() {
+        return BindingBuilder.bind(createQueuePropostaConcluidaMsNotificacao())
+                .to(createFanoutExchangePropostaConcluida());
     }
 
 }
