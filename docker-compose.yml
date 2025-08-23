@@ -24,6 +24,7 @@ services:
   propostams:
     image: proposta-ms
     container_name: proposta-ms
+    build: ./ms-proposta
     environment:
       spring.profiles.active: prod
     ports:
@@ -35,6 +36,7 @@ services:
   analise-creditoms:
     image: analise-credito-ms
     container_name: analise-credito-ms
+    build: ./ms-analise-credito
     environment:
       spring.profiles.active: prod
     depends_on:
