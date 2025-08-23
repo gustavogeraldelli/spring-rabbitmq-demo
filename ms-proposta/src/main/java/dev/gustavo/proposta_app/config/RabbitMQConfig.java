@@ -50,7 +50,7 @@ public class RabbitMQConfig {
     @Bean
     public Queue createQueuePropostaPendenteMsAnaliseCredito() {
         return QueueBuilder.durable("proposta-pendente.ms-analisar-credito")
-                //.ttl(10000)
+                .ttl(15000)
                 .deadLetterExchange("proposta-pendente-dlx.ex")
                 .maxPriority(10)
                 .build();
@@ -99,7 +99,7 @@ public class RabbitMQConfig {
     @Bean
     public Binding createBindingDLQPendenteMsAnaliseCredito() {
         return BindingBuilder.bind(createDLQPropostaPendenteMsAnaliseCredito())
-                .to(createFanoutExchangePropostaPendente());
+                .to(createDLXPropostaPendente());
     }
 
     /**
