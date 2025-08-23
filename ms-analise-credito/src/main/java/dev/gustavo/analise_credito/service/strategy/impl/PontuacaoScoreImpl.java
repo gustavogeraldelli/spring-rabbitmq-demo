@@ -14,13 +14,13 @@ public class PontuacaoScoreImpl implements CalculoPonto {
     @Override
     public int calcular(Proposta proposta) {
         int s = score();
-        if (s <= 300) throw new RuntimeException("Score baixo");
+        if (s <= 100) throw new RuntimeException("Score baixo");
         else if (s <= 600) return 100;
         return 150;
     }
 
     private int score() {
-        return new Random().nextInt(0, 100);
+        return new Random().nextInt(0, 1000);
     }
 
 }
