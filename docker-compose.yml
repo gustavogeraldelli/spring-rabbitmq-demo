@@ -8,9 +8,40 @@ services:
       POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
+
   rabbit:
     image: rabbitmq:4-management
     container_name: rabbitmq-udemy
     ports:
       - "5672:5672"
       - "15672:15672"
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping 
+      interval: 5s
+      timeout: 5s
+      retries: 3
+  
+  propostams:
+    image: proposta-ms
+    container_name: proposta-ms
+    environment:
+      spring.profiles.active: prod
+    ports:
+     - "8080:8080"
+    depends_on:
+     rabbit:
+        condition: service_healthy
+  
+  analise-creditoms:
+    image: analise-credito-ms
+    container_name: analise-credito-ms
+    environment:
+      spring.profiles.active: prod
+    depends_on:
+      rabbit:
+        condition: service_healthy
+  
+#  notificacao-ms:
+#    image: notificacao-ms
+#    depends_on:
+#      - rabbit
