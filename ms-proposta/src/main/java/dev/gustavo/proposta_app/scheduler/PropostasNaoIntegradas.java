@@ -1,7 +1,7 @@
 package dev.gustavo.proposta_app.scheduler;
 
 import dev.gustavo.proposta_app.repository.PropostaRepository;
-import dev.gustavo.proposta_app.service.NotificationService;
+import dev.gustavo.proposta_app.service.RabbitMQService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class PropostasNaoIntegradas {
 
     private final PropostaRepository propostaRepository;
-    private final NotificationService notificationService;
+    private final RabbitMQService rabbitMQService;
 
     private final Logger logger = LoggerFactory.getLogger(PropostasNaoIntegradas.class);
 
@@ -24,7 +24,7 @@ public class PropostasNaoIntegradas {
     public void buscarPropostasQueNaoForamIntegradas() {
         propostaRepository.findByIntegradaIsFalse().forEach(proposta -> {
            try {
-               notificationService.notificar(proposta, "proposta-pendente.ex");
+               rabbitMQService.notificar(proposta, "proposta-pendente.ex");
                proposta.setIntegrada(true);
                propostaRepository.save(proposta);
            }

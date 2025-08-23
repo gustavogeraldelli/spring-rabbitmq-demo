@@ -15,7 +15,7 @@ import java.util.List;
 public class PropostaService {
 
     private final PropostaRepository propostaRepository;
-    private final NotificationService notificationService;
+    private final RabbitMQService rabbitMQService;
 
     public PropostaResponseDTO criar(PropostaRequestDTO propostaRequestDTO) {
         var p = propostaRepository.save(PropostaMapper.INSTANCE.toProposta(propostaRequestDTO));
@@ -27,7 +27,7 @@ public class PropostaService {
 
     private void notificarRabbitMQ(Proposta proposta) {
         try {
-            notificationService.notificar(proposta, "proposta-pendente.ex");
+            rabbitMQService.notificar(proposta, "proposta-pendente.ex");
         }
         catch (RuntimeException e) {
             // flag para indicar se foi enviado ao rabbitmq ou nao
