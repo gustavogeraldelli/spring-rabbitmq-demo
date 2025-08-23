@@ -17,7 +17,7 @@ public class PropostaConcluidaListener {
 
     @RabbitListener(queues = "proposta-concluida.ms-proposta")
     private void propostaConcluida(Proposta proposta) {
-        propostaRepository.save(proposta);
+        propostaRepository.updateProposta(proposta.getId(), proposta.getAprovada(),  proposta.getObservacao());
 
         webSocketService.ws(PropostaMapper.INSTANCE.toPropostaResponseDTO(proposta));
     }
