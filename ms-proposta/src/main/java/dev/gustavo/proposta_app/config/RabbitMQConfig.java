@@ -52,6 +52,7 @@ public class RabbitMQConfig {
         return QueueBuilder.durable("proposta-pendente.ms-analisar-credito")
                 //.ttl(10000)
                 .deadLetterExchange("proposta-pendente-dlx.ex")
+                .maxPriority(10)
                 .build();
     }
 

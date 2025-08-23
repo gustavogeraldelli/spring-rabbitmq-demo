@@ -6,6 +6,7 @@ import dev.gustavo.proposta_app.entity.Proposta;
 import dev.gustavo.proposta_app.mapper.PropostaMapper;
 import dev.gustavo.proposta_app.repository.PropostaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,14 +21,21 @@ public class PropostaService {
     public PropostaResponseDTO criar(PropostaRequestDTO propostaRequestDTO) {
         var p = propostaRepository.save(PropostaMapper.INSTANCE.toProposta(propostaRequestDTO));
 
-        notificarRabbitMQ(p);
+        // definindo uma prioridade para a mensagem
+        int prio = p.getUsuario().getRenda() > 50000 ? 10 : 5;
+        MessagePostProcessor messagePostProcessor = message -> {
+            message.getMessageProperties().setPriority(prio);
+            return message;
+        };
+
+        notificarRabbitMQ(p, messagePostProcessor);
 
         return PropostaMapper.INSTANCE.toPropostaResponseDTO(p);
     }
 
-    private void notificarRabbitMQ(Proposta proposta) {
+    private void notificarRabbitMQ(Proposta proposta, MessagePostProcessor messagePostProcessor) {
         try {
-            rabbitMQService.notificar(proposta, "proposta-pendente.ex");
+            rabbitMQService.notificar(proposta, "proposta-pendente.ex", messagePostProcessor);
         }
         catch (RuntimeException e) {
             // flag para indicar se foi enviado ao rabbitmq ou nao
